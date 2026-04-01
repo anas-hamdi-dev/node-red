@@ -1,0 +1,422 @@
+[
+    {
+        "id": "6b6c17d00db48f7b",
+        "type": "tab",
+        "label": "Flux 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "7e03babc08bc2433",
+        "type": "ui_gauge",
+        "z": "6b6c17d00db48f7b",
+        "name": "",
+        "group": "a35c0d0ce905c7f2",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "pression",
+        "label": "bar",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 10,
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 700,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "f7ab51ad93262fd0",
+        "type": "ui_numeric",
+        "z": "6b6c17d00db48f7b",
+        "name": "",
+        "label": "pression ",
+        "tooltip": "",
+        "group": "a35c0d0ce905c7f2",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "wrap": false,
+        "passthru": true,
+        "topic": "topic",
+        "topicType": "msg",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "className": "",
+        "x": 80,
+        "y": 600,
+        "wires": [
+            [
+                "b523571648210c73"
+            ]
+        ]
+    },
+    {
+        "id": "93dacd89197b1efe",
+        "type": "ui_gauge",
+        "z": "6b6c17d00db48f7b",
+        "name": "",
+        "group": "1b6e1489ca2b3b92",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "température Sortie",
+        "label": "°C",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "50",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 730,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "45aa5d2121636174",
+        "type": "ui_gauge",
+        "z": "6b6c17d00db48f7b",
+        "name": "",
+        "group": "1b6e1489ca2b3b92",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "débit ",
+        "label": "m³/h",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "30",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 690,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "3d2527f63e53c75e",
+        "type": "ui_gauge",
+        "z": "6b6c17d00db48f7b",
+        "name": "",
+        "group": "1b6e1489ca2b3b92",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "température Entrer",
+        "label": "°C",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "50",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 730,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "cae42d294004aff9",
+        "type": "ui_gauge",
+        "z": "6b6c17d00db48f7b",
+        "name": "",
+        "group": "1b6e1489ca2b3b92",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "pression",
+        "label": "bar",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 10,
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 700,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "41a4b3157633b77a",
+        "type": "function",
+        "z": "6b6c17d00db48f7b",
+        "name": "function 1",
+        "func": "let obj = null;\nlet p = msg.payload;\n\n// 1) إذا payload object صحيح مباشرة\nif (p && typeof p === \"object\" && p.pressure1 !== undefined) {\n    obj = p;\n}\n\n// 2) إذا payload object لكن فيه clé واحدة فيها JSON كاملة\nif (!obj && p && typeof p === \"object\") {\n    const keys = Object.keys(p);\n    if (keys.length === 1) {\n        let raw = keys[0];\n        raw = raw.replace(/(\\d+),(\\d+)/g, \"$1.$2\");\n        obj = JSON.parse(raw);\n    }\n}\n\n// 3) إذا payload string\nif (!obj && typeof p === \"string\") {\n    let raw = p;\n    raw = raw.replace(/(\\d+),(\\d+)/g, \"$1.$2\");\n    obj = JSON.parse(raw);\n}\n\nif (!obj) {\n    node.error(\"Could not parse payload: \" + JSON.stringify(msg.payload));\n    return null;\n}\n\nreturn [\n    { payload: Number(obj.pressure1) },\n    { payload: Number(obj.debit) },\n    { payload: Number(obj.pressure2) },\n    { payload: Number(obj.temp_in) },\n    { payload: Number(obj.temp_out) }\n];",
+        "outputs": 5,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 460,
+        "wires": [
+            [
+                "7e03babc08bc2433"
+            ],
+            [
+                "45aa5d2121636174"
+            ],
+            [
+                "cae42d294004aff9"
+            ],
+            [
+                "3d2527f63e53c75e"
+            ],
+            [
+                "93dacd89197b1efe"
+            ]
+        ]
+    },
+    {
+        "id": "65209a6e4750b1ef",
+        "type": "http in",
+        "z": "6b6c17d00db48f7b",
+        "name": "",
+        "url": "/data",
+        "method": "post",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 80,
+        "y": 340,
+        "wires": [
+            [
+                "d6afd7c93410a94e",
+                "41a4b3157633b77a",
+                "8cc7a80358f0df8f"
+            ]
+        ]
+    },
+    {
+        "id": "475d8a25c2ac3a67",
+        "type": "http response",
+        "z": "6b6c17d00db48f7b",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 690,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "d6afd7c93410a94e",
+        "type": "function",
+        "z": "6b6c17d00db48f7b",
+        "name": "function 2",
+        "func": "msg.payload = \"OK\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 540,
+        "wires": [
+            [
+                "475d8a25c2ac3a67"
+            ]
+        ]
+    },
+    {
+        "id": "8cc7a80358f0df8f",
+        "type": "debug",
+        "z": "6b6c17d00db48f7b",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 500,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "3279a4fea079f989",
+        "type": "http in",
+        "z": "6b6c17d00db48f7b",
+        "name": "",
+        "url": "/ consigne pression",
+        "method": "post",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 110,
+        "y": 520,
+        "wires": [
+            [
+                "b523571648210c73"
+            ]
+        ]
+    },
+    {
+        "id": "b523571648210c73",
+        "type": "function",
+        "z": "6b6c17d00db48f7b",
+        "name": "function 3",
+        "func": "flow.set(\"consigne\", msg.payload);\nmsg.payload = \"OK\";\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 540,
+        "wires": [
+            [
+                "b173a1727d5532f7"
+            ]
+        ]
+    },
+    {
+        "id": "b173a1727d5532f7",
+        "type": "http response",
+        "z": "6b6c17d00db48f7b",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 550,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "83801212571855f7",
+        "type": "http in",
+        "z": "6b6c17d00db48f7b",
+        "name": "",
+        "url": "/consigne",
+        "method": "get",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 100,
+        "y": 660,
+        "wires": [
+            [
+                "5285ab1e9f5bfef7"
+            ]
+        ]
+    },
+    {
+        "id": "5285ab1e9f5bfef7",
+        "type": "function",
+        "z": "6b6c17d00db48f7b",
+        "name": "function 4",
+        "func": "let c = flow.get(\"consigne\");\n\nif (c === undefined) {\n    c = 0;\n}\n\nmsg.payload = c;\nreturn msg;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 290,
+        "y": 700,
+        "wires": [
+            [
+                "36003abfba05986b"
+            ]
+        ]
+    },
+    {
+        "id": "36003abfba05986b",
+        "type": "http response",
+        "z": "6b6c17d00db48f7b",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 450,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "a35c0d0ce905c7f2",
+        "type": "ui_group",
+        "name": "SCADA",
+        "tab": "184c2b86371fa151",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "1b6e1489ca2b3b92",
+        "type": "ui_group",
+        "name": "SCADA",
+        "tab": "39624d4be966ac62",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "184c2b86371fa151",
+        "type": "ui_tab",
+        "name": "chaudiére",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "39624d4be966ac62",
+        "type": "ui_tab",
+        "name": "tour ",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "5119ea3e02fe2f09",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-dashboard": "3.6.6"
+        }
+    }
+]

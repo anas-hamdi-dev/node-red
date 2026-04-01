@@ -1,0 +1,8 @@
+node_modules/
+.history/
+
+# Node-RED local runtime state
+.config.runtime.json
+.config.runtime.json.backup
+.config.users.json
+.config.users.json.backup
