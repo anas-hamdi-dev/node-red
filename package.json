@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node-red -u . -s settings.js",
+    "start:local": "node-red -u . -s settings.js -p 1881",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
